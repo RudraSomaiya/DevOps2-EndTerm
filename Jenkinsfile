@@ -18,7 +18,7 @@ pipeline {
         stage("Build") {
             steps {
                 echo "=== Installing Python dependencies ==="
-                sh "sudo pip3 install -r requirements.txt --quiet"
+                sh "sudo pip3 install -r requirements.txt --quiet --break-system-packages"
                 echo "Build completed successfully."
             }
         }
