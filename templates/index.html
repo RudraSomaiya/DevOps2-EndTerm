@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieLens User Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:"Segoe UI",Arial,sans-serif; background:#f0f4f8; }
+        header { background:linear-gradient(135deg,#0d47a1,#1565c0,#1976d2);
+                 color:white; padding:32px 20px; text-align:center; }
+        header h1 { font-size:1.9rem; margin-bottom:6px; }
+        header p  { opacity:0.8; font-size:0.92rem; }
+        .container { max-width:1200px; margin:28px auto; padding:0 20px; }
+        .stats-grid { display:grid; grid-template-columns:repeat(4,1fr);
+                      gap:18px; margin-bottom:26px; }
+        .card { background:white; border-radius:10px; padding:24px;
+                box-shadow:0 3px 12px rgba(0,0,0,.08); text-align:center;
+                border-top:5px solid; }
+        .card:nth-child(1){border-color:#1565c0}
+        .card:nth-child(2){border-color:#2e7d32}
+        .card:nth-child(3){border-color:#e65100}
+        .card:nth-child(4){border-color:#6a1b9a}
+        .value{font-size:2.4rem;font-weight:700;margin-bottom:5px}
+        .card:nth-child(1) .value{color:#1565c0}
+        .card:nth-child(2) .value{color:#2e7d32}
+        .card:nth-child(3) .value{color:#e65100}
+        .card:nth-child(4) .value{color:#6a1b9a}
+        .label{font-size:.82rem;color:#78909c;text-transform:uppercase;
+               letter-spacing:.7px}
+        .charts-grid{display:grid;grid-template-columns:1fr 1fr;
+                     gap:22px;margin-bottom:26px}
+        .chart-card,.table-card{background:white;border-radius:10px;padding:22px;
+                                box-shadow:0 3px 12px rgba(0,0,0,.08)}
+        .chart-card h3,.table-card h3{font-size:.97rem;color:#455a64;
+            margin-bottom:16px;border-bottom:2px solid #e8eaf6;padding-bottom:9px}
+        table{width:100%;border-collapse:collapse}
+        th{background:#0d47a1;color:white;padding:10px 14px;text-align:left;
+           font-size:.88rem}
+        td{padding:9px 14px;border-bottom:1px solid #eceff1;font-size:.9rem}
+        tr:nth-child(even)td{background:#f5f7ff}
+        footer{text-align:center;padding:18px;color:#90a4ae;font-size:.82rem}
+        @media(max-width:768px){.stats-grid{grid-template-columns:1fr 1fr}
+            .charts-grid{grid-template-columns:1fr}}
+    </style>
+</head>
+<body>
+<header>
+    <h1>&#x1F3A5; MovieLens User Data Dashboard</h1>
+    <p>End-Term CI/CD Assessment &nbsp;|&nbsp; Dataset fetched live from AWS S3
+       &nbsp;|&nbsp; Deployed via Jenkins on EC2</p>
+</header>
+<div class="container">
+ 
+    <div class="stats-grid">
+      <div class="card"><div class="value">{{ total_users }}</div>
+        <div class="label">Total Users</div></div>
+      <div class="card"><div class="value">{{ avg_age }}</div>
+        <div class="label">Average Age</div></div>
+      <div class="card"><div class="value">{{ top_occ }}</div>
+        <div class="label">Top Occupation</div></div>
+      <div class="card">
+        <div class="value">{{ male_count }}/{{ female_count }}</div>
+        <div class="label">Male / Female</div></div>
+    </div>
+ 
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3>&#x1F4CA; Age Distribution of Users</h3>
+        <canvas id="ageChart"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>&#x1F4CB; Top Occupations</h3>
+        <canvas id="occChart"></canvas>
+      </div>
+    </div>
+ 
+    <div class="table-card">
+      <h3>&#x1F464; Occupation Grouping — All Records</h3>
+      <table>
+        <thead><tr><th>Occupation</th><th>Number of Users</th></tr></thead>
+        <tbody>
+          {% for occ, cnt in occ_table %}
+          <tr><td>{{ occ | capitalize }}</td><td>{{ cnt }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+ 
+</div>
+<footer>
+    MovieLens Dataset | Flask on AWS EC2 | Deployed via Jenkins CI/CD | DevOps2-EndTerm-RudraSomaiya
+</footer>
+ 
+<script>
+  const ageLabels = {{ age_labels | safe }};
+  const ageValues = {{ age_values | safe }};
+  const occLabels = {{ occ_labels | safe }};
+  const occValues = {{ occ_values | safe }};
+ 
+  new Chart(document.getElementById("ageChart"), {
+    type:"bar",
+    data:{ labels:ageLabels,
+           datasets:[{label:"Users",data:ageValues,
+             backgroundColor:["#1565c0","#2e7d32","#e65100",
+                              "#6a1b9a","#00838f","#c62828"],
+             borderRadius:5}] },
+    options:{ responsive:true,
+              plugins:{legend:{display:false}},
+              scales:{y:{beginAtZero:true}} }
+  });
+ 
+  new Chart(document.getElementById("occChart"), {
+    type:"horizontalBar" in Chart.defaults ? "horizontalBar" : "bar",
+    data:{ labels:occLabels,
+           datasets:[{data:occValues,
+             backgroundColor:"#1565c0",borderRadius:4}] },
+    options:{ indexAxis:"y", responsive:true,
+              plugins:{legend:{display:false}},
+              scales:{x:{beginAtZero:true}} }
+  });
+</script>
+</body>
+</html>
