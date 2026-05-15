@@ -19,6 +19,7 @@ def fetch_dataframe():
         io.StringIO(raw), sep="|",
         names=["user_id", "age", "gender", "occupation", "zip_code"]
     )
+    df["age"] = pd.to_numeric(df["age"], errors="coerce")
     return df
  
  
