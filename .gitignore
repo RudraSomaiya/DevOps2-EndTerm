@@ -1,0 +1,15 @@
+__pycache__/
+.pytest_cache/
+venv/
+.venv/
+
+# Runtime logs and editor temp files
+*.log
+~*.tmp
+
+# Reports and submission documents stay local
+*.pdf
+*.docx
+
+# MovieLens data (GroupLens licence does not allow redistribution)
+u.user
